@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User\User;
+use App\Models\City;
+use App\Models\Orders\BookingDetail;
 
 class Booking extends Model
 {
@@ -12,19 +14,34 @@ class Booking extends Model
 
     protected $table = 'bookings';
 
-    /**
-     * Get the user who made the booking
-     */
-    public function user(): BelongsTo
+    protected $fillable = [
+        'name',
+        'phone_number',
+        'num_of_guests',
+        'checkin_date',
+        'destination',
+        'status',
+        'user_id',
+        'city_id',
+        'payment',
+    ];
+
+    // Relationship: Booking belongs to a user
+    public function user()
     {
-        return $this->belongsTo(\App\Models\User\User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Get the city associated with the booking
-     */
-    public function city(): BelongsTo
+    // Relationship: Booking belongs to a city (main destination)
+    public function city()
     {
-        return $this->belongsTo(\App\Models\City::class, 'city_id');
+        return $this->belongsTo(City::class, 'city_id');
+    }
+
+    // Relationship: A booking can have many booking details (e.g., cities visited or itinerary)
+    public function details()
+    {
+        return $this->hasMany(BookingDetail::class, 'booking_id')
+                    ->with('city:id,name,image');
     }
 }

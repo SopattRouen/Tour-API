@@ -56,15 +56,15 @@ export const appRoutes: Route[] = [
             },
 
             // =============================>> Sale
-            {
-                path: 'contries',
-                loadChildren: () =>import('app/main/product/product.main.module').then(m => m.ProductMainModule) ,
-                canActivate: [AuthGuard],
-            },
+            // {
+            //     path: 'all/contries',
+            //     loadChildren: () =>import('app/main/product/product.main.module').then(m => m.ProductMainModule) ,
+            //     canActivate: [AuthGuard],
+            // },
 
             // =============================>> Product
             {
-                path: 'cities',
+                path: 'all',
                 loadChildren: () => import('app/main/product/product.main.module').then(m => m.ProductMainModule),
                 canActivate: [AuthGuard],
             },

@@ -25,21 +25,21 @@ export class ProductTypeService {
         const httpOptions = {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         };
-        return this.http.get(this.url + '/admin/products/types', httpOptions);
+        return this.http.get(this.url + '/admin/cities', httpOptions);
     }
 
     // ==================== Update One Brand
     update(id: number = 0, data: object = {}): any {
-        return this.http.post(this.url + '/admin/products/types/' + id, data, this.httpOptions);
+        return this.http.post(this.url + '/admin/cities/' + id, data, this.httpOptions);
     }
 
     // ==================== Create One Brand
     create( data: object = {}): any {
-        return this.http.post(this.url + '/admin/products/types', data , this.httpOptions);
+        return this.http.post(this.url + '/admin/cities', data , this.httpOptions);
     }
 
     // ==================== Delete One Brand
     delete(id: number = 0): any {
-        return this.http.delete(this.url + '/admin/products/types/' + id, this.httpOptions);
+        return this.http.delete(this.url + '/admin/cities/' + id, this.httpOptions);
     }
 }

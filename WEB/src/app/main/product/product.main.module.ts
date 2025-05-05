@@ -13,11 +13,11 @@ const routes: Routes = [
         path: '',
         children: [
             {
-                path: 'all',
+                path: 'contries',
                 loadChildren: () => import('app/main/product/product/product.module').then(m => m.ProductModule)
             },
             {
-                path: 'types',
+                path: 'cities',
                 loadChildren: () => import('app/main/product/type/product-type.module').then(m => m.ProductTypeModule)
             }
         ]

@@ -5,43 +5,40 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\City;
+use App\Models\User\User;
 
 class BookingSeeder extends Seeder
 {
-    public function run()
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Create Sample Bookings
-        |--------------------------------------------------------------------------
-        */
-        $bookings = [
-            [
-                'name' => 'John Doe',
-                'phone_number' => '+33612345678',
-                'num_of_guests' => 2,
-                'checkin_date' => Carbon::now()->addDays(10),
-                'destination' => 'Paris',
-                'status' => 'confirmed',
-                'city_id' => 1,
-                'user_id' => 2,
-                'payment' => 'credit_card',
-                'created_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Jane Smith',
-                'phone_number' => '+819012345678',
-                'num_of_guests' => 1,
-                'checkin_date' => Carbon::now()->addDays(14),
-                'destination' => 'Tokyo',
-                'status' => 'pending',
-                'city_id' => 2,
-                'user_id' => 2,
-                'payment' => 'paypal',
-                'created_at' => Carbon::now(),
-            ],
-        ];
+        $cities = City::all();
+        $users = User::all();
 
-        DB::table('bookings')->insert($bookings);
+        if ($cities->isEmpty()) {
+            $this->command->warn('No cities found. Please seed the cities table first.');
+            return;
+        }
+
+        for ($i = 1; $i <= 5; $i++) {
+            $city = $cities->random(); // pick one city
+            $user = $users->random(); // get a random user instance
+
+            DB::table('bookings')->insert([
+                'name'           => $user->name,
+                'phone_number'   => '01234567' . $i,
+                'num_of_guests'  => rand(1, 5),
+                'checkin_date'   => Carbon::now()->addDays(rand(1, 30)),
+                'destination'    => $city->name,     // destination = city name
+                'status'         => 'paid',
+                'user_id'        => 1,               // make sure this user exists
+                'city_id'        => $city->id,       // consistent city_id
+                'payment'        => 'cash',
+                'created_at'     => now(),
+            ]);
+        }
     }
 }

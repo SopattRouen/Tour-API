@@ -80,6 +80,38 @@ class CitySeeder extends Seeder
                 'country_id' => 5,
                 'created_at' => Carbon::now(),
             ],
+            [
+                'name' => 'Phatya',
+                'image' => 'static/City/Cities/download-8.jpg',
+                'trip_days' => 15,
+                'price' => '1500',
+                'country_id' => 4,
+                'created_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Vieng Chan',
+                'image' => 'static/City/Cities/download-7.jpg',
+                'trip_days' => 7,
+                'price' => '450',
+                'country_id' => 5,
+                'created_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Phatya',
+                'image' => 'static/City/Cities/download-8.jpg',
+                'trip_days' => 15,
+                'price' => '1500',
+                'country_id' => 4,
+                'created_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Vieng Chan',
+                'image' => 'static/City/Cities/download-7.jpg',
+                'trip_days' => 7,
+                'price' => '450',
+                'country_id' => 5,
+                'created_at' => Carbon::now(),
+            ],
         ];
 
         DB::table('cities')->insert($cities);

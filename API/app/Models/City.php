@@ -18,6 +18,7 @@ class City extends Model
         return $this->belongsTo(\App\Models\Country::class, 'country_id');
     }
 
+
     public function bookings(): HasMany
     {
         return $this->hasMany(\App\Models\Booking::class, 'city_id');

@@ -11,17 +11,18 @@ use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductTypeController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BookingController;
 
 // ===========================================================================>> Dashboard
 // Route::get('/dashboard', [DashboardController::class, 'getDashboardInfo']);
 
 // ===========================================================================>> POS
-// Route::group(['prefix' => 'pos'], function () {
-
-//     Route::get('/products', [POSController::class, 'getProducts']);
-//     Route::post('/order',   [POSController::class, 'makeOrder']);
-
-// });
+Route::prefix('bookings')->group(function () {
+    Route::get('/', [BookingController::class, 'index']);
+    Route::get('/{id}', [BookingController::class, 'show']);
+    Route::put('/{id}', [BookingController::class, 'update']);
+    Route::delete('/{id}', [BookingController::class, 'destroy']);
+});
 
 // ===========================================================================>> Sale
 // Route::group(['prefix' => 'sales'], function () {

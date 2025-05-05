@@ -30,7 +30,7 @@ class CityController extends MainController
 
         // Order by latest and paginate
         $data = $data->orderBy('id', 'desc')
-                    ->paginate($req->limit ?? 10, ['*'], 'per_page');
+                    ->paginate($req->limit ?? 50, ['*'], 'per_page');
 
         // Return response
         return response()->json($data, Response::HTTP_OK);
