@@ -26,12 +26,12 @@ export class SaleService {
      |
      */
     // ==================== Read All Products
-    getData(params = {}): any {
+    getBookings(params = {}): any {
         const httpOptions = {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         };
         httpOptions['params'] = params;
-        return this.http.get(this.url + '/admin/sales', httpOptions);
+        return this.http.get(this.url + '/admin/bookings/getData', httpOptions);
     }
     // ==================== Delete One Product
     print(receipt_number: number = 0): any {

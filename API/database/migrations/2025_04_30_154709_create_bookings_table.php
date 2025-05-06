@@ -14,6 +14,7 @@ return new class extends Migration
 {
     Schema::create('bookings', function (Blueprint $table) {
         $table->id(); // BIGINT UNSIGNED
+        $table->integer('receipt_number')->unsigned()->nullable();
         $table->string('name', 150);
         $table->string('phone_number', 200);
         $table->unsignedInteger('num_of_guests');
@@ -23,7 +24,10 @@ return new class extends Migration
         $table->foreignId('user_id')->constrained('user')->onDelete('cascade');
         $table->foreignId('city_id')->constrained('cities')->onDelete('cascade');
         $table->string('payment', 50);
-        $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+        $table->dateTime('booked_at')->nullable();
+
+        $table->timestamps();
+        $table->softDeletes();
     });
 }
 

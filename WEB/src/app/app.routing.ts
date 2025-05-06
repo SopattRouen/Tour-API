@@ -51,7 +51,7 @@ export const appRoutes: Route[] = [
             // =============================>> Pos
             {
                 path: 'bookings',
-                loadChildren: () => import('app/main/pos/pos.module').then(m => m.PosModule),
+                loadChildren: () => import('app/main/sale/sale.module').then(m => m.SaleModule),
                 canActivate: [AuthGuard],
             },
 

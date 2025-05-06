@@ -11,8 +11,12 @@ import { DetailsComponent } from './view-detail-dialog/details.component';
 
 const saleRoutes: Routes = [
     {
-        path: 'xyz',
+        path: '', // This matches the 'bookings' path
         component: ListingComponent
+    },
+    {
+        path: 'xyz',
+        component: DetailsComponent
     }
 ];
 

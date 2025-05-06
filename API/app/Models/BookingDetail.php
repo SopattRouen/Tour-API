@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Orders;
+namespace App\Models;
 
 use App\Models\Booking;
 use App\Models\City;

@@ -18,10 +18,10 @@ use App\Http\Controllers\Admin\BookingController;
 
 // ===========================================================================>> POS
 Route::prefix('bookings')->group(function () {
-    Route::get('/', [BookingController::class, 'index']);
-    Route::get('/{id}', [BookingController::class, 'show']);
-    Route::put('/{id}', [BookingController::class, 'update']);
-    Route::delete('/{id}', [BookingController::class, 'destroy']);
+    Route::post('/', [BookingController::class, 'makeBooking']);
+    Route::get('/getData', [BookingController::class, 'listBookings']);
+    // Route::put('/{id}', [BookingController::class, 'update']);
+    // Route::delete('/{id}', [BookingController::class, 'destroy']);
 });
 
 // ===========================================================================>> Sale

@@ -38,8 +38,23 @@ const MY_DATE_FORMAT = {
 
 export class ListingComponent implements OnInit {
 
-  public displayedColumns: string[] = ['no', 'invoice', 'cashier','price', 'date', 'action'];
+  // Update displayed columns to match your booking data
+  displayedColumns: string[] = [
+    'no',
+    'receipt_number',
+    'user_name',
+    'city_name',
+    'price',
+    'trip_days',
+    'num_of_guests',
+    'phone_number',
+    'checkin_date',
+    'action'
+  ];
+  
+
   public dataSource: any;
+  
 
   public isLoading: boolean = false;
   public isDownloading: boolean = false;
@@ -101,7 +116,7 @@ export class ListingComponent implements OnInit {
     this.isLoading = true;
 
     // Call API
-    this._saleService.getData(param).subscribe((res: any) => {
+    this._saleService.getBookings(param).subscribe((res: any) => {
 
         // console.log(res);
 
@@ -113,6 +128,7 @@ export class ListingComponent implements OnInit {
 
         // Mapping Data Source
         this.dataSource       = new MatTableDataSource(this.data);
+        
 
         // Update Pagination
         this.total            = res.total;

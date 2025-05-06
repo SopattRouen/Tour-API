@@ -17,8 +17,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('city_id');    // FK to cities
             $table->integer('trip_days');             // Customizable trip days for the booking
             $table->decimal('price', 10, 2);          // Booking price for the city
-            $table->text('notes')->nullable();        // Optional notes
-            $table->timestamps();
+            $table->integer('num_of_guests');
+
+
 
             // Foreign keys
             $table->foreign('booking_id')
@@ -30,6 +31,9 @@ return new class extends Migration {
                   ->references('id')
                   ->on('cities')
                   ->onDelete('cascade');
+
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 

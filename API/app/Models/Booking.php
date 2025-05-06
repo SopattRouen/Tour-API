@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\BookingDetail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User\User;
 use App\Models\City;
-use App\Models\Orders\BookingDetail;
+
 
 class Booking extends Model
 {
