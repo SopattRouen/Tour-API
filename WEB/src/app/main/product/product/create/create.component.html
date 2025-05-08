@@ -1,5 +1,5 @@
 <div mat-dialog-title class="custom-dialog-title">
-    <span class="text-3xl text-white">បង្កើតផលិតផល</span>
+    <span class="text-3xl text-white">បង្កើតប្រទេស</span>
 </div>
 
 <mat-dialog-content class="custom-dialog-content" scrollbar>
@@ -15,14 +15,14 @@
             <div class="w-full">
                 <div class="custom-form custom-select w-full">
                     <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>លេខកូដ</mat-label>
-                        <input id="code" matInput [formControlName]="'code'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('code').hasError('required')">
-                            សូមបញ្ចូលលេខកូដ
+                        <mat-label>ឈ្មោះ</mat-label>
+                        <input id="name" matInput [formControlName]="'name'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('name').hasError('required')">
+                            សូមបញ្ចូលឈ្មោះ
                         </mat-error>
                     </mat-form-field>
-                    <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ប្រភេទផលិតផល</mat-label>
+                    <!-- <mat-form-field appearance="outline" class="w-full mb-6">
+                        <mat-label>ទ្វីប</mat-label>
                         <ng-container>
                             <mat-select formControlName="type_id">
                                 <ng-container *ngIf="types?.length > 0">
@@ -36,20 +36,36 @@
                             *ngIf="form.get('type_id').hasError('required')">
                             សូមជ្រើសរើសប្រភេទផលិតផល
                         </mat-error>
+                    </mat-form-field> -->
+                    <mat-form-field appearance="outline" class="w-full mb-6">
+                        <mat-label>ទ្វីប</mat-label>
+                        <input id="continent" matInput [formControlName]="'continent'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('continent').hasError('required')">
+                            សូមបញ្ចូលទ្វីប
+                        </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ឈ្មោះ</mat-label>
-                        <input id="name" matInput [formControlName]="'name'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('name').hasError('required')">
-                            សូមបញ្ចូលឈ្មោះ
+                        <mat-label>ចំនួនប្រជាជន</mat-label>
+                        <input id="population" matInput [formControlName]="'population'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('population').hasError('required')">
+                            សូមបញ្ចូលចំនួនប្រជាជន
                         </mat-error>
                     </mat-form-field>
+
                     <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>តម្លៃ​(រៀល)</mat-label>
-                        <input id="unit_price" matInput [formControlName]="'unit_price'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('unit_price').hasError('required')">
-                            សូមបញ្ចូលតម្លៃ​ជាប្រាក់រៀល
+                        <mat-label>ផ្ទៃក្រឡា</mat-label>
+                        <input id="territory" matInput [formControlName]="'territory'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('territory').hasError('required')">
+                            សូមបញ្ចូលផ្ទៃក្រឡា
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="w-full mb-6">
+                        <mat-label>ការបរិយាយ</mat-label>
+                        <input id="description" matInput [formControlName]="'description'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('description').hasError('required')">
+                            សូមបញ្ចូលការបរិយាយ
                         </mat-error>
                     </mat-form-field>
                 </div>

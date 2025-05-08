@@ -6,7 +6,7 @@ import { NgForm, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angul
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProductTypeService } from '../product-type.service';
 import { SnackbarService } from 'app/shared/services/snackbar.service';
-
+import { environment as env } from 'environments/environment';
 // ==========================================================>> Custom Library
 
 
@@ -18,6 +18,8 @@ import { SnackbarService } from 'app/shared/services/snackbar.service';
 export class ViewDialogComponent implements OnInit  {
   public form: UntypedFormGroup;
   public isSaving:boolean = false; 
+  public types: any = [];//Product Type
+  public srcImageFileUrl: string = 'assets/icons/icon-img.png';
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private _formBuilder: UntypedFormBuilder,
@@ -32,13 +34,25 @@ export class ViewDialogComponent implements OnInit  {
 
   ngOnInit(): void {
     this.formBuilder();
-
+    this.getProductType();
+    this.srcImageFileUrl = env.FILE_PUBLIC_BASE_URL + this.data.image;
   }
 
   formBuilder(): void {
     this.form = this._formBuilder.group({
       name: [this.data.name, Validators.required],
+      trip_days: [this.data.trip_days],
+      price: [this.data.price],
+      country_id:[this.data.country_id],
+      image:[this.data.image],
     });
+  }
+
+  // Getting base64 string after file is selected
+  srcChange($event: any): void {
+
+    // Assign base64 string ($event) to fill image of the form
+    this.form.get('image').setValue($event);
   }
   save(){
 
@@ -57,6 +71,13 @@ export class ViewDialogComponent implements OnInit  {
       this._dialogRef.close(res.data);
     });
 
+  }
+  getProductType(): void {
+    this._typeService.getSetUp().subscribe(
+      (res: any) => {
+      this.types = res;
+    },
+  );
   }
   
   

@@ -1,11 +1,10 @@
 <div mat-dialog-title class="custom-dialog-title">
-    <span class="text-3xl text-white">បច្ចុប្បន្នភាពប្រទេស</span>
+    <span class="text-3xl text-white">បង្កើតទីក្រុង</span>
 </div>
 
 <mat-dialog-content class="custom-dialog-content" scrollbar>
     <form [formGroup]="form" >
         <div class="flex flex-col sm:flex-row gap-2">
-            
             <div class="w-full md:min-w-60 md:max-w-60 flex justify-center mt-3">
                 <div class="pr-0 md:pr-5 w-full max-w-60">
                     <app-portrait mode="mode" [src]=" srcImageFileUrl " [title]=" 'ជ្រើសរើសរូបភាព' "
@@ -13,7 +12,6 @@
                     </app-portrait>
                 </div>
             </div>
-            
             <div class="w-full">
                 <div class="custom-form custom-select w-full">
                     <mat-form-field appearance="outline" class="w-full mb-6">
@@ -23,10 +21,10 @@
                             សូមបញ្ចូលឈ្មោះ
                         </mat-error>
                     </mat-form-field>
-                    <!-- <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ទ្វីប</mat-label>
+                    <mat-form-field appearance="outline" class="w-full mb-6">
+                        <mat-label>ប្រទេស</mat-label>
                         <ng-container>
-                            <mat-select formControlName="type_id">
+                            <mat-select formControlName="country_id">
                                 <ng-container *ngIf="types?.length > 0">
                                     <mat-option *ngFor="let row of types" [value]="row.id">
                                         <span>{{ row.name }}</span>
@@ -35,41 +33,26 @@
                             </mat-select>
                         </ng-container>
                         <mat-error class="min-h-6 mt-2.5 text-sm"
-                            *ngIf="form.get('type_id').hasError('required')">
-                            សូមជ្រើសរើសប្រភេទផលិតផល
+                            *ngIf="form.get('country_id').hasError('required')">
+                            សូមជ្រើសរើស្រទេស
                         </mat-error>
-                    </mat-form-field> -->
+                    </mat-form-field>
                     <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ទ្វីប</mat-label>
-                        <input id="continent" matInput [formControlName]="'continent'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('continent').hasError('required')">
-                            សូមបញ្ចូលទ្វីប
+                        <mat-label>ចំនួនថ្ងៃ</mat-label>
+                        <input id="trip_days" matInput [formControlName]="'trip_days'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('trip_days').hasError('required')">
+                            សូមបញ្ចូលចំនួនថ្ងៃ
                         </mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ចំនួនប្រជាជន</mat-label>
-                        <input id="population" matInput [formControlName]="'population'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('population').hasError('required')">
-                            សូមបញ្ចូលចំនួនប្រជាជន
+                        <mat-label>តំលៃ</mat-label>
+                        <input id="price" matInput [formControlName]="'price'" required>
+                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('price').hasError('required')">
+                            សូមបញ្ចូលចំនួនតំលៃ
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ផ្ទៃក្រឡា</mat-label>
-                        <input id="territory" matInput [formControlName]="'territory'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('territory').hasError('required')">
-                            សូមបញ្ចូលផ្ទៃក្រឡា
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ការបរិយាយ</mat-label>
-                        <input id="description" matInput [formControlName]="'description'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('description').hasError('required')">
-                            សូមបញ្ចូលការបរិយាយ
-                        </mat-error>
-                    </mat-form-field>
                 </div>
             </div>
         </div>
@@ -78,7 +61,7 @@
 
 <mat-dialog-actions align="center" class="custom-dialog-actions">
     <button class="min-w-8 max-w-8 rounded-md custom-button" mat-flat-button (click)="submit()"
-        [disabled]="form.invalid || isSaving">
+        [disabled]="form.invalid || saving">
         <mat-icon *ngIf="!form.disabled" class="icon-size-6 text-white" svgIcon="mat_solid:save"></mat-icon>
         <mat-progress-spinner *ngIf="form.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
     </button>

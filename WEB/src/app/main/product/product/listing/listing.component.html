@@ -7,11 +7,11 @@
                 </mat-icon>
                 <span class="ml-1 text-gray-600">ប្រទេស</span>
             </div>
-            <div class="flex items-center ml-1 whitespace-nowrap">
+            <!-- <div class="flex items-center ml-1 whitespace-nowrap">
                 <mat-icon class="icon-size-4.5 text-gray-600" [svgIcon]="'heroicons_solid:chevron-right'">
                 </mat-icon>
                 <span class="ml-1 text-gray-600">ទាំងអស់</span>
-            </div>
+            </div> -->
         </div>
         <div class="flex items-center gap-2">
             <div class="custom-select-header hidden md:flex">
@@ -92,7 +92,7 @@
                         <th mat-header-cell *matHeaderCellDef> រូបភាព </th>
                         <td mat-cell *matCellDef="let element">
                             <img [src]="element?.image ? FILE_PUBLIC_BASE_URL + element.image : null"
-                                style="width: 45px; height: 45px;" alt="image">
+                                style="width: 100px; height: 100px;" alt="image">
                         </td>
                     </ng-container>
 
@@ -129,7 +129,10 @@
                     <!-- Column: Description -->
                     <ng-container matColumnDef="description">
                         <th mat-header-cell *matHeaderCellDef> ការបរិយាយ </th>
-                        <td mat-cell *matCellDef="let element"> {{ element?.description }} </td>
+                        <td mat-cell *matCellDef="let element">
+                            {{ element?.description?.length > 100 ? (element.description | slice:0:100) + '...' : element.description }}
+                          </td>
+                          
                     </ng-container>
 
                     <!-- Column: Date -->

@@ -52,11 +52,12 @@ export class UpdateDialogComponent implements OnInit {
 
   formBuilder(): void {
     this.form = this._formBuilder.group({
-      code: [this.dialogData.code, Validators.required],
-      type_id: [this.dialogData.type_id, Validators.required],
-      name: [this.dialogData.name, Validators.required],
-      unit_price: [this.dialogData.unit_price, Validators.required],
-      image: [''],
+      name: [this.dialogData.name],
+      continent: [this.dialogData.continent],
+      population: [this.dialogData.population],
+      territory: [this.dialogData.territory],
+      description: [this.dialogData.description],
+      image: [this.dialogData.image],
     });
   }
 

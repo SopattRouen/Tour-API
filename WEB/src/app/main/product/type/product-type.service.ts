@@ -20,6 +20,14 @@ export class ProductTypeService {
 
     constructor(private http: HttpClient) { }
 
+    //get setup data
+    getSetUp(): any {
+        const httpOptions = {
+            headers: new HttpHeaders().set('Content-Type', 'application/json')
+        };
+        return this.http.get(this.url + '/admin/cities/setup', httpOptions);
+    }
+
     // ==================== Read All types
     get(): any {
         const httpOptions = {

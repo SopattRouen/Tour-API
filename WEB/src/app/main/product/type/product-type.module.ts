@@ -7,7 +7,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { ScrollbarModule } from 'helpers/directives/scrollbar';
 import { ListingComponent } from './listing/listing.component';
 import { ViewDialogComponent } from './view-dialog/view-dialog.component';
-import { CreateDialogComponent } from './create-dialog/create-dialog.component';
+import { CreateComponent } from './create/create.component';
 
 
 const routes: Routes = [
@@ -26,7 +26,7 @@ const routes: Routes = [
     declarations: [
         ListingComponent,
         ViewDialogComponent,
-        CreateDialogComponent
+        CreateComponent
     ],
 })
 export class ProductTypeModule {}

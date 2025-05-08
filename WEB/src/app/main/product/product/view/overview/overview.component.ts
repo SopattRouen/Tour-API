@@ -57,10 +57,11 @@
 
             if (this.data) {
                 this.form = this._formBuilder.group({
-                    code: [this.data.code],
-                    type_id: [this.data.type_id],
                     name: [this.data.name],
-                    unit_price: [this.data.unit_price],
+                    continent: [this.data.continent],
+                    population: [this.data.population],
+                    territory: [this.data.territory],
+                    description: [this.data.description],
                     image: [this.data.image],
                 });
             }

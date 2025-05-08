@@ -9,9 +9,9 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { SnackbarService } from 'app/shared/services/snackbar.service';
 import { ProductTypeService } from '../product-type.service';
 import { ViewDialogComponent } from '../view-dialog/view-dialog.component';
-import { CreateDialogComponent } from '../create-dialog/create-dialog.component';
 import { ConfirmDialogComponent } from 'app/shared/confirm-dialog/confirm-dialog.component';
 import { environment as env } from 'environments/environment';
+import { CreateComponent } from '../create/create.component';
 
 @Component({
     selector: 'app-listing',
@@ -20,7 +20,7 @@ import { environment as env } from 'environments/environment';
 })
 export class ListingComponent implements OnInit {
 
-    public displayedColumns: string[] = ['no','image', 'name', 'trip_days', 'price', 'contry_name', 'date'];
+    public displayedColumns: string[] = ['no','image', 'name', 'trip_days', 'price', 'contry_name', 'date','action'];
     public dataSource: any;
     public isLoading: boolean = false;
     public data: any = [];
@@ -96,7 +96,7 @@ export class ListingComponent implements OnInit {
     create(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.width = '500px';
-        const dialogRef = this._dialog.open(CreateDialogComponent, dialogConfig);
+        const dialogRef = this._dialog.open(CreateComponent, dialogConfig);
         dialogRef.afterClosed().subscribe(res => {
             res.n_of_products = 0;
             this.data.unshift(res);

@@ -7,9 +7,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 // ==========================================================>> Custom Library
 import { SnackbarService } from 'app/shared/services/snackbar.service';
-import { ProductsService } from '../product.service';
 import { ProductTypeService } from '../../type/product-type.service';
 import { environment as env } from 'environments/environment';
+import { ProductsService } from '../../product/product.service';
 
 @Component({
   selector: 'app-create',
@@ -53,10 +53,9 @@ export class CreateComponent implements OnInit {
   formBuilder(): void {
     this.form = this._formBuilder.group({
       name: ['', Validators.required],
-      continent: ['', Validators.required],
-      population: ['', Validators.required],
-      territory: ['', Validators.required],
-      description: ['', Validators.required],
+      trip_days: ['', Validators.required],
+      price: ['', Validators.required],
+      country_id: ['', Validators.required],
       image: [],
     });
   }
@@ -82,7 +81,7 @@ export class CreateComponent implements OnInit {
     this.saving = true;
 
     // call to api
-    this._productsService.create(this.form.value).subscribe(
+    this._productsTypeService.create(this.form.value).subscribe(
       (res: any) => {
         const product: any = this.form.value ;
 
@@ -121,7 +120,7 @@ export class CreateComponent implements OnInit {
   }
 
   getProductType(): void {
-    this._productsTypeService.get().subscribe(
+    this._productsTypeService.getSetUp().subscribe(
       (res: any) => {
       this.types = res;
     },
