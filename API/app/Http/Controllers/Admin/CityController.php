@@ -13,6 +13,13 @@ use Illuminate\Support\Facades\DB;
 
 class CityController extends MainController
 {
+    public function setUpData()
+    {
+        $countries = Country::select('id', 'name')->orderBy('name')->get();
+
+        return response()->json($countries, Response::HTTP_OK);
+    }
+
     public function listing(Request $req)
     {
         // Base query with country relationship
@@ -61,7 +68,6 @@ class CityController extends MainController
                 'country_id'     => 'required|exists:countries,id',
                 'trip_days'      => 'required|integer|min:1',
                 'price'          => 'required|string|max:10',
-                'image'         => 'required|image'
             ],
             [
                 'name.required'         => 'សូមបញ្ចូលឈ្មោះទីក្រុង',
@@ -72,8 +78,6 @@ class CityController extends MainController
                 'trip_days.integer'     => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែជាលេខគត់',
                 'trip_days.min'         => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែយ៉ាងតិច១ថ្ងៃ',
                 'price.required'        => 'សូមបញ្ចូលតម្លៃ',
-                'image.required'        => 'សូមបញ្ចូលរូបភាព',
-                'image.image'           => 'ឯកសារត្រូវតែជារូបភាព'
             ]
         );
 
@@ -111,7 +115,6 @@ class CityController extends MainController
                 'country_id'   => 'required|exists:countries,id',
                 'trip_days'     => 'required|integer|min:1',
                 'price'        => 'required|string|max:10',
-                'image'         => 'nullable|image'
             ],
             [
                 'name.required'         => 'សូមបញ្ចូលឈ្មោះទីក្រុង',
@@ -122,7 +125,6 @@ class CityController extends MainController
                 'trip_days.integer'     => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែជាលេខគត់',
                 'trip_days.min'         => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែយ៉ាងតិច១ថ្ងៃ',
                 'price.required'        => 'សូមបញ្ចូលតម្លៃ',
-                'image.image'           => 'ឯកសារត្រូវតែជារូបភាព'
             ]
         );
 

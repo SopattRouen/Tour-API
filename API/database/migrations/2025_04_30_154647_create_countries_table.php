@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('countries', function (Blueprint $table) {
             $table->id();
             $table->string('name', 150);
-            $table->string('image', 200);
+            $table->string('image', 500)->nullable();
             $table->string('continent', 200);
             $table->string('population', 50);
             $table->string('territory', 50);
             $table->text('description');
-            $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->timestamps(); // This adds both created_at and updated_at
+
         });
     }
 

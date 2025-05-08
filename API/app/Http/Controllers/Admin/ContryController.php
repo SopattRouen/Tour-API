@@ -68,137 +68,129 @@ class ContryController extends MainController
             $req,
             [
                 'name'              => 'required|max:50',
-                'code'              => 'required|max:20',
-                'unit_price'        => 'required|numeric',
-                'type_id'           => 'required|exists:products_type,id'
+                'continent'              => 'required|max:20',
+                'population'        => 'required|max:100',
+                'territory'           => 'required|max:100',
+                'description'           => 'required|max:10000',
             ],
             [
                 'name.required'         => 'សូមបញ្ចូលឈ្មោះផលិតផល',
                 'name.max'              => 'ឈ្មោះផលិតផលមិនអាចលើសពី50ខ្ទង់',
 
-                'code.required'         => 'សូមបញ្ចូលឈ្មោះលេខកូដផលិតផល',
-                'code.max'              => 'សូមបញ្ចូលឈ្មោះលេខកូដផលិតផលមិនអាចលើសពី២០ខ្ទង់',
+                'continent.required'         => 'សូមបញ្ចូលឈ្មោះទ្វីបផលិតផល',
+                'continent.max'              => 'សូមបញ្ចូលឈ្មោះទ្វីបមិនអាចលើសពី២០ខ្ទង់',
 
-                'unit_price.required'   => 'សូមបញ្ចូលតម្លៃរាយ',
-                'unit_price.numeric'    => 'សូមបញ្ចូលតម្លៃរាយជាលេខ',
+                'population.required'   => 'សូមបញ្ចូលប្រជាជន',
+                'population.max'        => 'សូមបញ្ចូលប្រជាជនមិនអោយលើសពី១០០ខ្ទង់',
 
-                'type_id.exists'        => 'សូមជ្រើសរើសឈ្មោះផលិតផល អោយបានត្រឹមត្រូវ កុំបោកពេក'
+                'territory.required'   => 'សូមបញ្ចូលផ្ទៃដី',
+                'territory.max'        => 'សូមបញ្ចូលផ្ទៃដីមិនអោយលើសពី១០០ខ្ទង់',
+
+                'description.required'   => 'សូមបញ្ចូលការបរិយាយ',
+                'description.max'        => 'សូមបញ្ចូលការបរិយាយមិនអោយលើសពី១០០ខ្ទង់',
 
             ]
 
         );
-        $product                = new Country;
-        $product->name          = $req->name;
-        $product->code          = $req->code;
-        $product->type_id       = $req->type_id;
-        $product->unit_price    = $req->unit_price;
+        $contry                = new Country;
+        $contry->name          = $req->name;
+        $contry->continent          = $req->continent;
+        $contry->population       = $req->population;
+        $contry->territory    = $req->territory;
+        $contry->description    = $req->description;
 
         //Save the data to DB
-        $product->save();
+        $contry->save();
 
         //  Upload image
         if ($req->image) {
 
             // Crate folder for image and then stored the image in the folder
             $folder = Carbon::today()->format('d-m-y');
-            $image  = FileUpload::uploadFile($req->image, 'products/' . $folder, $req->fileName);
+            $image  = FileUpload::uploadFile($req->image, 'contries/' . $folder, $req->fileName);
 
             // Save image
-            $product->image  = $image['url'];
-            $product->save();
+            $contry->image  = $image['url'];
+            $contry->save();
         }
 
         // send response back to clients as json
         return response()->json([
-            'data'      => Country::select('*')->with(['type'])->find($product->id),
-            'message'   => 'ផលិតផលត្រូវបានបង្កើតដោយជោគជ័យ។'
+            'data'      => Country::select('*')->find($contry->id),
+            'message'   => 'ប្រទេសត្រូវបានបង្កើតដោយជោគជ័យ។'
         ], Response::HTTP_OK);
     }
 
-    public function update(Request $req, $id = 0){
-
+    public function update(Request $req, $id = 0)
+    {
         // ===>> Check validation
         $this->validate(
             $req,
             [
-                'name'              => 'required|max:20',
-                'code'              => 'required|max:20',
-                'unit_price'        => 'required',
-                'type_id'           => 'required|exists:products_type,id'
+                'name'              => 'required|max:50',
+                'continent'         => 'required|max:20',
+                'population'        => 'required|max:100',
+                'territory'         => 'required|max:100',
+                'description'       => 'required|max:10000',
             ],
             [
                 'name.required'         => 'សូមបញ្ចូលឈ្មោះផលិតផល',
-                'name.max'              => 'ឈ្មោះផលិតផលមិនអាចលើសពី២០ខ្ទង់',
-                'unit_price.required'   => 'សូមបញ្ចូលឈ្មោះ unit_price',
-                'code.required'         => 'សូមបញ្ចូលឈ្មោះលេខកូដផលិតផល',
-                'code.max'              => 'សូមបញ្ចូលឈ្មោះលេខកូដផលិតផលមិនអាចលើសពី២០ខ្ទង់',
-                'type_id.exists'        => 'សូមជ្រើសរើសឈ្មោះផលិតផល'
+                'name.max'              => 'ឈ្មោះផលិតផលមិនអាចលើសពី50ខ្ទង់',
+
+                'continent.required'    => 'សូមបញ្ចូលឈ្មោះទ្វីបផលិតផល',
+                'continent.max'         => 'សូមបញ្ចូលឈ្មោះទ្វីបមិនអាចលើសពី២០ខ្ទង់',
+
+                'population.required'   => 'សូមបញ្ចូលប្រជាជន',
+                'population.max'        => 'សូមបញ្ចូលប្រជាជនមិនអោយលើសពី១០០ខ្ទង់',
+
+                'territory.required'    => 'សូមបញ្ចូលផ្ទៃដី',
+                'territory.max'         => 'សូមបញ្ចូលផ្ទៃដីមិនអោយលើសពី១០០ខ្ទង់',
+
+                'description.required'  => 'សូមបញ្ចូលការបរិយាយ',
+                'description.max'       => 'សូមបញ្ចូលការបរិយាយមិនអោយលើសពី១០០០០ខ្ទង់',
             ]
         );
 
-        // ===>> Update Product
-        // Find record from DB
-        $product                    = Country::find($id);
+        // ===>> Find record from DB
+        $country = Country::find($id);
 
-        // ===>> Check if data is valide
-        if ($product) { //Yes
+        // ===>> Check if record exists
+        if ($country) {
 
-            // Map field of table in DB Vs. requested value from client
-            $product->name          = $req->name;
-            $product->code          = $req->code;
-            $product->type_id       = $req->type_id;
-            $product->unit_price    = $req->unit_price;
+            // Update fields
+            $country->name        = $req->name;
+            $country->continent   = $req->continent;
+            $country->population  = $req->population;
+            $country->territory   = $req->territory;
+            $country->description = $req->description;
 
-            // ===>> Save to DB
-            $product->save();
+            // Save updated data
+            $country->save();
 
             // ===>> Image Upload
             if ($req->image) {
-
-                // Need to create folder before storing images
                 $folder = Carbon::today()->format('d-m-y');
+                $image  = FileUpload::uploadFile($req->image, 'contries/' . $folder, $req->fileName);
 
-                // ===>> Send to File Service
-                $image  = FileUpload::uploadFile($req->image, 'products/', $req->fileName);
-
-                // ===>> Check if image has been successfully uploaded
                 if ($image['url']) {
-
-                    // Map field of table in DB Vs. uri from File Service
-                    $product->image     = $image['url'];
-
-                    // ===>> Save to DB
-                    $product->save();
-
+                    $country->image = $image['url'];
+                    $country->save();
                 }
             }
 
-            // Prepare Data backt to Client
-            $product = Country::select('*')
-            ->with([
-                'type'
-            ])
-            ->find($product->id);
-
-            // ===> Success Response Back to Client
+            // Return updated country data
             return response()->json([
                 'status'    => 'ជោគជ័យ',
-                'message'   => 'ផលិតផលត្រូវបានកែប្រែជោគជ័យ',
-                'product'   => $product,
+                'message'   => 'ទិន្នន័យត្រូវបានកែប្រែដោយជោគជ័យ',
+                'data'      => Country::select('*')->find($country->id),
             ], Response::HTTP_OK);
 
-        } else { // No
-
-            // ===> Failed Response Back to Client
+        } else {
             return response()->json([
-
                 'status'    => 'បរាជ័យ',
-                'message'   => 'ទិន្នន័យមិនត្រឹមត្រូវ',
-
-            ], Response::HTTP_BAD_REQUEST);
-
+                'message'   => 'រកមិនឃើញទិន្នន័យ',
+            ], Response::HTTP_NOT_FOUND);
         }
-
     }
 
     public function delete($id = 0){

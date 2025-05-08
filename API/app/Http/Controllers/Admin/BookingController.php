@@ -34,7 +34,7 @@ class BookingController extends MainController
         // ===>> Create Booking
         $booking = new Booking;
         $booking->receipt_number  = $this->_generateReceiptNumber();
-        $booking->name            = $req->name;
+        $booking->name            = $user->name; // Use authenticated user's name
         $booking->phone_number    = $req->phone_number;
         $booking->num_of_guests   = $req->num_of_guests;
         $booking->checkin_date    = $req->checkin_date;
@@ -78,16 +78,16 @@ class BookingController extends MainController
         // Get pagination parameters from request with defaults
         $page = $request->input('page', 1);
         $limit = $request->input('limit', 10);
-        
+
         // Validate pagination parameters
         if (!is_numeric($page) || $page < 1) {
             $page = 1;
         }
-        
+
         if (!is_numeric($limit) || $limit < 1) {
             $limit = 10;
         }
-    
+
         // Base query
         $query = Booking::with([
                 'user:id,name',
@@ -104,17 +104,17 @@ class BookingController extends MainController
                 'booked_at'
             ])
             ->orderBy('booked_at', 'desc');
-    
+
         // Get total count before pagination
         $total = $query->count();
-    
+
         // Apply pagination
         $bookings = $query->paginate($limit, ['*'], 'page', $page);
-    
+
         // Transform the results
         $transformedBookings = $bookings->map(function ($booking) {
             $detail = $booking->details->first();
-            
+
             return [
                 'receipt_number' => $booking->receipt_number,
                 'city_name' => $booking->city->name ?? null,
@@ -126,7 +126,86 @@ class BookingController extends MainController
                 'checkin_date' => $booking->booked_at // Assuming booked_at is the check-in date
             ];
         });
-    
+
+        return response()->json([
+            'data' => $transformedBookings,
+            'total' => $total,
+            'current_page' => $bookings->currentPage(),
+            'per_page' => $bookings->perPage(),
+            'last_page' => $bookings->lastPage(),
+            'message' => 'Booking list retrieved successfully'
+        ], Response::HTTP_OK);
+    }
+
+    public function listBookingsById(Request $request)
+    {
+        // Get the authenticated user's ID
+        $userId = auth()->id();
+
+        // Return 401 if no user is authenticated
+        if (!$userId) {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // Get pagination parameters from request with defaults
+        $page = $request->input('page', 1);
+        $limit = $request->input('limit', 10);
+        $order = $request->input('order', 'desc'); // Default: 'desc'
+
+        // Validate pagination parameters
+        if (!is_numeric($page) || $page < 1) {
+            $page = 1;
+        }
+
+        if (!is_numeric($limit) || $limit < 1) {
+            $limit = 10;
+        }
+
+        // Ensure order is either 'asc' or 'desc'
+        $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'desc';
+
+        // Base query with user filter
+        $query = Booking::with([
+                'user:id,name',
+                'city:id,name',
+                'details:id,booking_id,trip_days,price,num_of_guests'
+            ])
+            ->select([
+                'id',
+                'receipt_number',
+                'phone_number',
+                'num_of_guests',
+                'user_id',
+                'city_id',
+                'booked_at'
+            ])
+            ->where('user_id', $userId) // Filter by the authenticated user
+            ->orderBy('booked_at', $order); // Dynamic ordering
+
+        // Get total count before pagination
+        $total = $query->count();
+
+        // Apply pagination
+        $bookings = $query->paginate($limit, ['*'], 'page', $page);
+
+        // Transform the results
+        $transformedBookings = $bookings->map(function ($booking) {
+            $detail = $booking->details->first();
+
+            return [
+                'receipt_number' => $booking->receipt_number,
+                'city_name' => $booking->city->name ?? null,
+                'user_name' => $booking->user->name ?? null,
+                'trip_days' => $detail->trip_days ?? null,
+                'price' => $detail->price ?? null,
+                'phone_number' => $booking->phone_number,
+                'num_of_guests' => $detail->num_of_guests ?? $booking->num_of_guests,
+                'checkin_date' => $booking->booked_at // Assuming booked_at is the check-in date
+            ];
+        });
+
         return response()->json([
             'data' => $transformedBookings,
             'total' => $total,

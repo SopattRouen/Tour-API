@@ -48,7 +48,7 @@ class BookingSeeder extends Seeder
                 'status' => $this->randomStatus(),
                 'user_id' => $user->id,
                 'city_id' => $city->id,
-                'payment' => 'cash',
+                'payment' => 'credit card',
                 'booked_at' => $bookedAt,
                 'created_at' => $bookedAt,
                 'updated_at' => $bookedAt,

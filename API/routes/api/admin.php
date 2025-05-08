@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\BookingController;
 Route::prefix('bookings')->group(function () {
     Route::post('/', [BookingController::class, 'makeBooking']);
     Route::get('/getData', [BookingController::class, 'listBookings']);
+    Route::get('/getByUser/{id}', [BookingController::class, 'listBookingsById']);
     // Route::put('/{id}', [BookingController::class, 'update']);
     // Route::delete('/{id}', [BookingController::class, 'destroy']);
 });
@@ -59,8 +60,9 @@ Route::group(['prefix' => 'cities'], function () {
     // Route::post('/types',       [ProductTypeController::class, 'create']); // Create New Record
     // Route::post('/types/{id}',   [ProductTypeController::class, 'update']); // Update
     // Route::delete('/types/{id}', [ProductTypeController::class, 'delete']); // Delete a Record
-
+    
     // ===>> Product
+    Route::get('/setup',        [CityController::class, 'setUpData']); // Read Multi Records
     Route::get('/',        [CityController::class, 'listing']); // Read Multi Records
     Route::get('/{id}',    [CityController::class, 'view']); // View a Record
     Route::post('/',       [CityController::class, 'create']); // Create New Record

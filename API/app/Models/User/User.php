@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use App\Models\Booking;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,6 +17,9 @@ class User extends Authenticatable implements JWTSubject
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'user';
+    protected $fillable = [
+        'type_id', 'name', 'email', 'password', 'is_active'
+    ];
 
     // JWT Auth required methods
     public function getJWTIdentifier()
