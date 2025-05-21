@@ -41,8 +41,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 150);
             $table->string('image', 500)->nullable();
-            $table->integer('trip_days');
-            $table->string('price', 10);
+            // $table->integer('trip_days');
+            // $table->string('price', 10);
             $table->foreignId('country_id')
                   ->constrained('countries')
                   ->onDelete('cascade'); // Ensures deletion cascades

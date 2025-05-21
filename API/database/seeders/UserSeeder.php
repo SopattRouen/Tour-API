@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
                 'password' => bcrypt('123456'),
                 'is_active' => 1,
                 'name' => 'Sophat Roeun',
-                'avatar' => 'static/icon/user.png',
+                'avatar' => 'static/icon/patt.png',
                 'created_at' => Carbon::now(),
             ],
             [

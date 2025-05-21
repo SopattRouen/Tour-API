@@ -6,6 +6,7 @@ use App\Http\Controllers\MainController;
 use App\Models\Booking;
 use App\Models\BookingDetail;
 use App\Models\City;
+use App\Models\Trip;
 use App\Models\User\User;
 use App\Services\TelegramService;
 use Illuminate\Http\Request;
@@ -15,206 +16,232 @@ use Carbon\Carbon;
 
 class BookingController extends MainController
 {
+    private function _sendNotification($booking)
+    {
+        // Calculate total price from the first booking detail (assuming one detail per booking)
+        $firstDetail = $booking->details->first();
+        $totalPrice = $firstDetail ? ($firstDetail->price * $firstDetail->num_of_guests) : 0;
+        
+        $htmlMessage  = "<b> ការកក់បានជោគជ័យ! </b>\n";
+        $htmlMessage .= "- លេខវិក្ក័យបត្រ ៖   {$booking->receipt_number}\n";
+        $htmlMessage .= "- អ្នកកក់ ៖   {$booking->name}\n";
+        $htmlMessage .= "- ទូរស័ព្ទ ៖   {$booking->phone_number}\n";
+        $htmlMessage .= "- ទីកន្លែងកំសាន្ត ៖   {$booking->destination}\n";
+        $htmlMessage .= "- ចំនួនអ្នកដំណើរ ​​​៖    {$booking->num_of_guests}\n";
+        $htmlMessage .= "- ថ្ងៃចេញដំណើរ ​៖    {$booking->checkin_date}\n";
+        $htmlMessage .= "- តម្លៃសរុប ៖    $" . number_format($totalPrice, 2) . "\n";
+        $htmlMessage .= "- កាលបរិច្ឆេទកក់ ៖    {$booking->booked_at}";
+    
+        TelegramService::sendMessage($htmlMessage, env('TELEGRAM_CHAT_ID'));
+    }
+    
     public function makeBooking(Request $req)
     {
-        // ===>> Validate Request
         $this->validate($req, [
             'phone_number'   => 'required|string|max:20',
             'num_of_guests'  => 'required|integer|min:1',
-            'checkin_date'   => 'required|date',
-            'city_id'        => 'required|exists:cities,id'
+            'trip_id'        => 'required|exists:trips,id'
         ]);
-
-        // ===>> Authenticated user
-        $user = JWTAuth::parseToken()->authenticate();
-
-        // ===>> Find city
-        $city = City::find($req->city_id);
-
-        // ===>> Create Booking
-        $booking = new Booking;
-        $booking->receipt_number  = $this->_generateReceiptNumber();
-        $booking->name            = $user->name; // Use authenticated user's name
-        $booking->phone_number    = $req->phone_number;
-        $booking->num_of_guests   = $req->num_of_guests;
-        $booking->checkin_date    = $req->checkin_date;
-        $booking->destination     = $city->name;
-        $booking->city_id         = $city->id;
-        $booking->user_id         = $user->id;
-        $booking->status          = 'paid';
-        $booking->payment         = 'credit card';
-        $booking->booked_at       = Carbon::now();
+    
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
+    
+        $trip = Trip::find($req->trip_id);
+    
+        if (!$trip) {
+            return response()->json(['message' => 'Trip not found.'], Response::HTTP_NOT_FOUND);
+        }
+    
+        // Calculate total price
+        $totalPrice = $trip->price * $req->num_of_guests;
+    
+        $booking = new Booking();
+        $booking->receipt_number = $this->_generateReceiptNumber();
+        $booking->trip_id       = $trip->id;
+        $booking->user_id       = $user->id;
+        $booking->name          = $user->name;
+        $booking->phone_number  = $req->phone_number;
+        $booking->num_of_guests = $req->num_of_guests;
+        $booking->checkin_date  = $trip->start_date;
+        $booking->destination   = $trip->city->name;
+        $booking->status        = 'paid';
+        $booking->payment       = 'credit card';
+        $booking->booked_at     = now();
         $booking->save();
-
-        // ===>> Create Booking Detail
-        $bookingDetail = new BookingDetail;
+    
+        $bookingDetail = new BookingDetail();
         $bookingDetail->booking_id    = $booking->id;
-        $bookingDetail->city_id       = $city->id;
-        $bookingDetail->trip_days     = $city->trip_days;
-        $bookingDetail->price         = $city->price;
+        $bookingDetail->trip_id       = $trip->id;
+        $bookingDetail->city_id       = $trip->city_id;
+        $bookingDetail->trip_days     = $trip->trip_days;
+        $bookingDetail->price         = $trip->price;
         $bookingDetail->num_of_guests = $req->num_of_guests;
         $bookingDetail->save();
-
-        // ===> Get Data for Client Response to view the booking in Popup.
-        $bookingData = Booking::select('*')
-            ->with([
-                'user:id,name', // M:1 (booking -> user)
-                'city:id,name', // M:1 (booking -> city)
-                'details:id,booking_id,city_id,trip_days,price,num_of_guests', // 1:M (booking -> booking_details)
-                'details.city:id,name' // M:1 (booking_details -> city)
+    
+        $bookingData = Booking::with([
+                'user:id,name',
+                'trip:id,title,city_id',
+                'details:id,booking_id,trip_id,city_id,trip_days,price,num_of_guests',
+                'details.city:id,name'
             ])
             ->find($booking->id);
-
-        // ===>> Send Telegram Notification
+    
+        // Add total_price to the booking data before sending notification
+        $bookingData->total_price = $totalPrice;
+    
         $this->_sendNotification($bookingData);
-
+    
         return response()->json([
-            'booking'  => $bookingData,
-            'message'  => 'ការកក់បានជោគជ័យ។'
+            'booking' => $bookingData,
+            'total_price' => $totalPrice,
+            'message' => 'Booking successful!'
         ], Response::HTTP_OK);
     }
+
+
     public function listBookings(Request $request)
-    {
-        // Get pagination parameters from request with defaults
-        $page = $request->input('page', 1);
-        $limit = $request->input('limit', 10);
+{
+    $page  = $request->input('page', 1);
+    $limit = $request->input('limit', 10);
+    $order = strtolower($request->input('order', 'desc')) === 'asc' ? 'asc' : 'desc';
+    $key   = $request->input('key');
 
-        // Validate pagination parameters
-        if (!is_numeric($page) || $page < 1) {
-            $page = 1;
-        }
+    $query = Booking::with([
+            'user:id,name',
+            'trip:id,title',
+            'details.city:id,name,image'
+        ])
+        ->select([
+            'id',
+            'receipt_number',
+            'phone_number',
+            'num_of_guests',
+            'user_id',
+            'trip_id',
+            'booked_at',
+            'checkin_date'
+        ])
+        ->orderBy('booked_at', $order);
 
-        if (!is_numeric($limit) || $limit < 1) {
-            $limit = 10;
-        }
-
-        // Base query
-        $query = Booking::with([
-                'user:id,name',
-                'city:id,name',
-                'details:id,booking_id,trip_days,price,num_of_guests'
-            ])
-            ->select([
-                'id',
-                'receipt_number',
-                'phone_number',
-                'num_of_guests',
-                'user_id',
-                'city_id',
-                'booked_at'
-            ])
-            ->orderBy('booked_at', 'desc');
-
-        // Get total count before pagination
-        $total = $query->count();
-
-        // Apply pagination
-        $bookings = $query->paginate($limit, ['*'], 'page', $page);
-
-        // Transform the results
-        $transformedBookings = $bookings->map(function ($booking) {
-            $detail = $booking->details->first();
-
-            return [
-                'receipt_number' => $booking->receipt_number,
-                'city_name' => $booking->city->name ?? null,
-                'user_name' => $booking->user->name ?? null,
-                'trip_days' => $detail->trip_days ?? null,
-                'price' => $detail->price ?? null,
-                'phone_number' => $booking->phone_number,
-                'num_of_guests' => $detail->num_of_guests ?? $booking->num_of_guests,
-                'checkin_date' => $booking->booked_at // Assuming booked_at is the check-in date
-            ];
+    // 🔍 Filter by keyword
+    if (!empty($key)) {
+        $query->where(function ($q) use ($key) {
+            $q->where('receipt_number', 'like', "%$key%")
+              ->orWhere('phone_number', 'like', "%$key%")
+              ->orWhereHas('user', function ($sub) use ($key) {
+                  $sub->where('name', 'like', "%$key%");
+              })
+              ->orWhereHas('trip', function ($sub) use ($key) {
+                  $sub->where('title', 'like', "%$key%");
+              })
+              ->orWhereHas('details.city', function ($sub) use ($key) {
+                  $sub->where('name', 'like', "%$key%");
+              });
         });
-
-        return response()->json([
-            'data' => $transformedBookings,
-            'total' => $total,
-            'current_page' => $bookings->currentPage(),
-            'per_page' => $bookings->perPage(),
-            'last_page' => $bookings->lastPage(),
-            'message' => 'Booking list retrieved successfully'
-        ], Response::HTTP_OK);
     }
 
-    public function listBookingsById(Request $request)
-    {
-        // Get the authenticated user's ID
-        $userId = auth()->id();
+    $bookings = $query->paginate($limit, ['*'], 'page', $page);
 
-        // Return 401 if no user is authenticated
-        if (!$userId) {
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+    $transformed = $bookings->getCollection()->map(function ($booking) {
+        $detail = $booking->details->first();
 
-        // Get pagination parameters from request with defaults
-        $page = $request->input('page', 1);
-        $limit = $request->input('limit', 10);
-        $order = $request->input('order', 'desc'); // Default: 'desc'
+        $guestCount = $detail->num_of_guests ?? $booking->num_of_guests;
+        $unitPrice = $detail->price ?? 0;
 
-        // Validate pagination parameters
-        if (!is_numeric($page) || $page < 1) {
-            $page = 1;
-        }
+        return [
+            'id'             => $booking->id,
+            'receipt_number' => $booking->receipt_number,
+            'city_name'      => $detail->city->name ?? null,
+            'user_name'      => $booking->user->name ?? null,
+            'trip_days'      => $detail->trip_days ?? null,
+            'price'          => $unitPrice * $guestCount,
+            'phone_number'   => $booking->phone_number,
+            'num_of_guests'  => $guestCount,
+            'checkin_date'   => $booking->checkin_date,
+            'booked_at'      => $booking->booked_at,
+        ];
+    });
 
-        if (!is_numeric($limit) || $limit < 1) {
-            $limit = 10;
-        }
 
-        // Ensure order is either 'asc' or 'desc'
-        $order = in_array(strtolower($order), ['asc', 'desc']) ? strtolower($order) : 'desc';
+    return response()->json([
+        'data'          => $transformed,
+        'total'         => $bookings->total(),
+        'current_page'  => $bookings->currentPage(),
+        'per_page'      => $bookings->perPage(),
+        'last_page'     => $bookings->lastPage(),
+        'message'       => 'Booking list retrieved successfully'
+    ], Response::HTTP_OK);
+}
 
-        // Base query with user filter
-        $query = Booking::with([
-                'user:id,name',
-                'city:id,name',
-                'details:id,booking_id,trip_days,price,num_of_guests'
-            ])
-            ->select([
-                'id',
-                'receipt_number',
-                'phone_number',
-                'num_of_guests',
-                'user_id',
-                'city_id',
-                'booked_at'
-            ])
-            ->where('user_id', $userId) // Filter by the authenticated user
-            ->orderBy('booked_at', $order); // Dynamic ordering
 
-        // Get total count before pagination
-        $total = $query->count();
 
-        // Apply pagination
-        $bookings = $query->paginate($limit, ['*'], 'page', $page);
 
-        // Transform the results
-        $transformedBookings = $bookings->map(function ($booking) {
-            $detail = $booking->details->first();
 
-            return [
-                'receipt_number' => $booking->receipt_number,
-                'city_name' => $booking->city->name ?? null,
-                'user_name' => $booking->user->name ?? null,
-                'trip_days' => $detail->trip_days ?? null,
-                'price' => $detail->price ?? null,
-                'phone_number' => $booking->phone_number,
-                'num_of_guests' => $detail->num_of_guests ?? $booking->num_of_guests,
-                'checkin_date' => $booking->booked_at // Assuming booked_at is the check-in date
-            ];
-        });
+public function listBookingsById(Request $request)
+{
+    $userId = auth()->id();
 
-        return response()->json([
-            'data' => $transformedBookings,
-            'total' => $total,
-            'current_page' => $bookings->currentPage(),
-            'per_page' => $bookings->perPage(),
-            'last_page' => $bookings->lastPage(),
-            'message' => 'Booking list retrieved successfully'
-        ], Response::HTTP_OK);
+    if (!$userId) {
+        return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
     }
+
+    $page  = $request->input('page', 1);
+    $limit = $request->input('limit', 10);
+    $order = in_array(strtolower($request->input('order', 'desc')), ['asc', 'desc']) ? strtolower($request->input('order')) : 'desc';
+
+    $query = Booking::with([
+            'user:id,name',
+            'trip:id,title',
+            'details.city:id,name'
+        ])
+        ->where('user_id', $userId)
+        ->select([
+            'id',
+            'receipt_number',
+            'phone_number',
+            'num_of_guests',
+            'user_id',
+            'trip_id',
+            'booked_at',
+            'checkin_date'
+        ])
+        ->orderBy('booked_at', $order);
+
+    $bookings = $query->paginate($limit, ['*'], 'page', $page);
+
+    $transformed = $bookings->getCollection()->map(function ($booking) {
+        $detail = $booking->details->first();
+
+        $guestCount = $detail->num_of_guests ?? $booking->num_of_guests;
+        $unitPrice = $detail->price ?? 0;
+
+        return [
+            'receipt_number' => $booking->receipt_number,
+            'city_name'      => $detail->city->name ?? null,
+            'user_name'      => $booking->user->name ?? null,
+            'trip_days'      => $detail->trip_days ?? null,
+            'price'          => $unitPrice * $guestCount,
+            'phone_number'   => $booking->phone_number,
+            'num_of_guests'  => $guestCount,
+            'booked_at'      => $booking->booked_at,
+            'checkin_date'   => $booking->checkin_date
+        ];
+    });
+
+    return response()->json([
+        'data'          => $transformed,
+        'total'         => $bookings->total(),
+        'current_page'  => $bookings->currentPage(),
+        'per_page'      => $bookings->perPage(),
+        'last_page'     => $bookings->lastPage(),
+        'message'       => 'Booking list retrieved successfully'
+    ], Response::HTTP_OK);
+}
+
+
     private function _generateReceiptNumber()
     {
         do {
@@ -225,17 +252,17 @@ class BookingController extends MainController
         return $number;
     }
 
-    private function _sendNotification($booking)
-    {
-        $htmlMessage  = "<b>ការកក់បានជោគជ័យ!</b>\n";
-        $htmlMessage .= "- លេខបង្កាន់ដៃ៖ {$booking->receipt_number}\n";
-        $htmlMessage .= "- អ្នកកក់៖ {$booking->name}\n";
-        $htmlMessage .= "- ទូរស័ព្ទ៖ {$booking->phone_number}\n";
-        $htmlMessage .= "- ទីកន្លែង៖ {$booking->destination}\n";
-        $htmlMessage .= "- ចំនួនអ្នក៖ {$booking->num_of_guests}\n";
-        $htmlMessage .= "- ថ្ងៃចូលស្នាក់៖ {$booking->checkin_date}\n";
-        $htmlMessage .= "- កាលបរិច្ឆេទកក់៖ {$booking->booked_at}";
+    // private function _sendNotification($booking)
+    // {
+    //     $htmlMessage  = "<b> ការកក់បានជោគជ័យ! </b>\n";
+    //     $htmlMessage .= "- លេខវិក្ក័យបត្រ   ៖ {$booking->receipt_number}\n";
+    //     $htmlMessage .= "- អ្នកកក់        ៖ {$booking->name}\n";
+    //     $htmlMessage .= "- ទូរស័ព្ទ        ៖ {$booking->phone_number}\n";
+    //     $htmlMessage .= "- ទីកន្លែងកំសាន្ត   ៖ {$booking->destination}\n";
+    //     $htmlMessage .= "- ចំនួនអ្នកដំណើរ   ​​​៖ {$booking->num_of_guests}\n";
+    //     $htmlMessage .= "- ថ្ងៃចេញដំណើរ​   ៖ {$booking->checkin_date}\n";
+    //     $htmlMessage .= "- កាលបរិច្ឆេទកក់   ៖ {$booking->booked_at}";
 
-        TelegramService::sendMessage($htmlMessage, env('TELEGRAM_CHAT_ID'));
-    }
+    //     TelegramService::sendMessage($htmlMessage, env('TELEGRAM_CHAT_ID'));
+    // }
 }

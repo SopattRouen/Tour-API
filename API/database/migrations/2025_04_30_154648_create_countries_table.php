@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id();
             $table->string('name', 150);
             $table->string('image', 500)->nullable();
-            $table->string('continent', 200);
+            $table->foreignId('continent_id')->constrained()->onDelete('cascade');
             $table->string('population', 50);
             $table->string('territory', 50);
             $table->text('description');
-            $table->timestamps(); // This adds both created_at and updated_at
-
+            $table->timestamps();
+            
+            // Optional: Add index for better performance
+            $table->index('continent_id');
         });
     }
 

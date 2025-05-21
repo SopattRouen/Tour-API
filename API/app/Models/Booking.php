@@ -1,13 +1,15 @@
 <?php
 
+// app/Models/Booking.php
+
 namespace App\Models;
 
-use App\Models\BookingDetail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User\User;
 use App\Models\City;
-
+use App\Models\Trip;
+use App\Models\BookingDetail;
 
 class Booking extends Model
 {
@@ -23,26 +25,25 @@ class Booking extends Model
         'destination',
         'status',
         'user_id',
-        'city_id',
+        'trip_id',
         'payment',
+        'booked_at',
     ];
 
-    // Relationship: Booking belongs to a user
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relationship: Booking belongs to a city (main destination)
-    public function city()
+    public function trip()
     {
-        return $this->belongsTo(City::class, 'city_id');
+        return $this->belongsTo(Trip::class, 'trip_id');
     }
 
-    // Relationship: A booking can have many booking details (e.g., cities visited or itinerary)
     public function details()
     {
         return $this->hasMany(BookingDetail::class, 'booking_id')
-                    ->with('city:id,name,image');
+                    ->with(['city', 'trip.city']); // Optional deep eager loading
     }
+
 }

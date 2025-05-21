@@ -22,8 +22,8 @@ class CityController extends MainController
 
     public function listing(Request $req)
     {
-        // Base query with country relationship
-        $data = City::with('country');
+        // Base query with country relationship and only select 'name' field
+        $data = City::with(['country:id,name']); // 👈 only fetch id & name from country
 
         // Filter by city name or country name
         if ($req->key && $req->key != '') {
@@ -35,28 +35,50 @@ class CityController extends MainController
             });
         }
 
-        // Order by latest and paginate
+        // Order and paginate
         $data = $data->orderBy('id', 'desc')
                     ->paginate($req->limit ?? 50, ['*'], 'per_page');
 
+        // Transform the response to include only country name
+        $transformed = $data->through(function ($city) {
+            return [
+                'id'    => $city->id,
+                'name'  => $city->name,
+                'image' => $city->image,
+                'country' => $city->country->name ?? null,
+                'created_at' => $city->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
         // Return response
-        return response()->json($data, Response::HTTP_OK);
+        return response()->json($transformed, Response::HTTP_OK);
     }
+
 
     public function view($id = 0)
     {
-        // Find record from DB with country relationship
-        $data = City::with('country')->find($id);
+        // Find city with country name only
+        $data = City::with(['country:id,name'])->find($id);
 
         if ($data) {
-            return response()->json($data, Response::HTTP_OK);
+            // Transform manually since it's a single model, not a collection
+            $transformed = [
+                'id'      => $data->id,
+                'name'    => $data->name,
+                'image'   => $data->image,
+                'country' => $data->country->name ?? null,
+                'created_at' => $data->created_at->format('Y-m-d H:i:s'),
+            ];
+
+            return response()->json($transformed, Response::HTTP_OK);
         } else {
             return response()->json([
-                'status'    => 'បរាជ័យ',
-                'message'   => 'ទិន្នន័យមិនត្រឹមត្រូវ',
+                'status'  => 'បរាជ័យ',
+                'message' => 'ទិន្នន័យមិនត្រឹមត្រូវ',
             ], Response::HTTP_BAD_REQUEST);
         }
     }
+
 
     public function create(Request $req)
     {
@@ -66,26 +88,26 @@ class CityController extends MainController
             [
                 'name'          => 'required|max:150',
                 'country_id'     => 'required|exists:countries,id',
-                'trip_days'      => 'required|integer|min:1',
-                'price'          => 'required|string|max:10',
+                // 'trip_days'      => 'required|integer|min:1',
+                // 'price'          => 'required|string|max:10',
             ],
             [
                 'name.required'         => 'សូមបញ្ចូលឈ្មោះទីក្រុង',
                 'name.max'               => 'ឈ្មោះទីក្រុងមិនអាចលើសពី១៥០ខ្ទង់',
                 'country_id.required'   => 'សូមជ្រើសរើសប្រទេស',
                 'country_id.exists'      => 'ប្រទេសដែលជ្រើសរើសមិនត្រឹមត្រូវ',
-                'trip_days.required'    => 'សូមបញ្ចូលចំនួនថ្ងៃធ្វើដំណើរ',
-                'trip_days.integer'     => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែជាលេខគត់',
-                'trip_days.min'         => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែយ៉ាងតិច១ថ្ងៃ',
-                'price.required'        => 'សូមបញ្ចូលតម្លៃ',
+                // 'trip_days.required'    => 'សូមបញ្ចូលចំនួនថ្ងៃធ្វើដំណើរ',
+                // 'trip_days.integer'     => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែជាលេខគត់',
+                // 'trip_days.min'         => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែយ៉ាងតិច១ថ្ងៃ',
+                // 'price.required'        => 'សូមបញ្ចូលតម្លៃ',
             ]
         );
 
         $city = new City;
         $city->name = $req->name;
         $city->country_id = $req->country_id;
-        $city->trip_days = $req->trip_days;
-        $city->price = $req->price;
+        // $city->trip_days = $req->trip_days;
+        // $city->price = $req->price;
 
         // Save the data to DB
         $city->save();
@@ -113,18 +135,18 @@ class CityController extends MainController
             [
                 'name'          => 'required|max:150',
                 'country_id'   => 'required|exists:countries,id',
-                'trip_days'     => 'required|integer|min:1',
-                'price'        => 'required|string|max:10',
+                // 'trip_days'     => 'required|integer|min:1',
+                // 'price'        => 'required|string|max:10',
             ],
             [
                 'name.required'         => 'សូមបញ្ចូលឈ្មោះទីក្រុង',
                 'name.max'               => 'ឈ្មោះទីក្រុងមិនអាចលើសពី១៥០ខ្ទង់',
                 'country_id.required'   => 'សូមជ្រើសរើសប្រទេស',
                 'country_id.exists'      => 'ប្រទេសដែលជ្រើសរើសមិនត្រឹមត្រូវ',
-                'trip_days.required'    => 'សូមបញ្ចូលចំនួនថ្ងៃធ្វើដំណើរ',
-                'trip_days.integer'     => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែជាលេខគត់',
-                'trip_days.min'         => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែយ៉ាងតិច១ថ្ងៃ',
-                'price.required'        => 'សូមបញ្ចូលតម្លៃ',
+                // 'trip_days.required'    => 'សូមបញ្ចូលចំនួនថ្ងៃធ្វើដំណើរ',
+                // 'trip_days.integer'     => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែជាលេខគត់',
+                // 'trip_days.min'         => 'ចំនួនថ្ងៃធ្វើដំណើរត្រូវតែយ៉ាងតិច១ថ្ងៃ',
+                // 'price.required'        => 'សូមបញ្ចូលតម្លៃ',
             ]
         );
 
@@ -133,8 +155,8 @@ class CityController extends MainController
         if ($city) {
             $city->name = $req->name;
             $city->country_id = $req->country_id;
-            $city->trip_days = $req->trip_days;
-            $city->price = $req->price;
+            // $city->trip_days = $req->trip_days;
+            // $city->price = $req->price;
 
             $city->save();
 
@@ -151,7 +173,13 @@ class CityController extends MainController
             return response()->json([
                 'status'    => 'ជោគជ័យ',
                 'message'   => 'ទីក្រុងត្រូវបានកែប្រែជោគជ័យ',
-                'data'      => City::with('country')->find($city->id),
+                'data' => [
+                    'id' => $city->id,
+                    'name' => $city->name,
+                    'image' => $city->image,
+                    'country' => $city->country->name ?? null,
+                    'created_at' => $city->created_at->format('Y-m-d H:i:s'),
+                ],
             ], Response::HTTP_OK);
         } else {
             return response()->json([

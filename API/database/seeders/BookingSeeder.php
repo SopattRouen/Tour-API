@@ -5,24 +5,21 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-use App\Models\City;
 use App\Models\User\User;
+use App\Models\Trip;
 use App\Models\Booking;
 use App\Models\BookingDetail;
 
 class BookingSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // ============ Required Data ============ \\
-        $cities = City::all();
+        // Required data
+        $trips = Trip::with('city')->get();
         $users = User::all();
 
-        if ($cities->isEmpty()) {
-            $this->command->warn('No cities found. Please seed the cities table first.');
+        if ($trips->isEmpty()) {
+            $this->command->warn('No trips found. Please seed the trips table first.');
             return;
         }
 
@@ -31,23 +28,23 @@ class BookingSeeder extends Seeder
             return;
         }
 
-        // ============ Generate Booking Data ============ \\
         for ($i = 1; $i <= 100; $i++) {
-            $city = $cities->random();
+            $trip = $trips->random();
             $user = $users->random();
-            $bookedAt = Carbon::now()->subDays(rand(0, 30))->setTime(rand(0, 23), rand(0, 59));
+            $bookedAt = Carbon::now()->addDays(rand(1, 30));
+            $numGuests = rand(1, 5);
 
             // Create Booking
             $booking = Booking::create([
                 'receipt_number' => $this->generateReceiptNumber(),
                 'name' => $user->name,
                 'phone_number' => '0123456' . str_pad($i, 2, '0', STR_PAD_LEFT),
-                'num_of_guests' => rand(1, 5),
-                'checkin_date' => Carbon::now()->addDays(rand(1, 30)),
-                'destination' => $city->name,
+                'num_of_guests' => $numGuests,
+                'checkin_date' => $trip->start_date,
+                'destination' => $trip->city->name ?? 'Unknown City',
                 'status' => $this->randomStatus(),
                 'user_id' => $user->id,
-                'city_id' => $city->id,
+                'trip_id' => $trip->id,
                 'payment' => 'credit card',
                 'booked_at' => $bookedAt,
                 'created_at' => $bookedAt,
@@ -57,19 +54,16 @@ class BookingSeeder extends Seeder
             // Create Booking Detail
             BookingDetail::create([
                 'booking_id' => $booking->id,
-                'city_id' => $city->id,
-                'trip_days' => $city->trip_days,
-                'price' => $city->price,
-                'num_of_guests' => $booking->num_of_guests,
+                'city_id' => $trip->city_id,
+                'trip_days' => $trip->trip_days ?? 3, // fallback if null
+                'price' => $trip->price,
+                'num_of_guests' => $numGuests,
                 'created_at' => $bookedAt,
                 'updated_at' => $bookedAt,
             ]);
         }
     }
 
-    /**
-     * Generate a unique receipt number.
-     */
     private function generateReceiptNumber(): string
     {
         do {
@@ -80,9 +74,6 @@ class BookingSeeder extends Seeder
         return (string) $number;
     }
 
-    /**
-     * Randomly return a status.
-     */
     private function randomStatus(): string
     {
         $statuses = ['paid'];

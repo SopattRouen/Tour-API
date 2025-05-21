@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\MyProfile;
+namespace App\Http\Controllers\Profile;
 
 // ============================================================================>> Core Library
 use Illuminate\Http\Request; // For Getting requested Payload from Client
@@ -21,7 +21,7 @@ use App\Services\FileUpload; // Upload Image/File to File Serivce
 // Model
 use App\Models\User\User;
 
-class MyProfileController extends Controller
+class MyProfileController extends MainController
 {
 
     public function view(){

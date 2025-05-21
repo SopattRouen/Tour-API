@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\TripController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ContryController;
 // ============================================================================>> Custom Library
@@ -14,8 +15,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BookingController;
 
 // ===========================================================================>> Dashboard
-// Route::get('/dashboard', [DashboardController::class, 'getDashboardInfo']);
-
+Route::get('/dashboard', [DashboardController::class, 'getDashboardInfo']);
+Route::get('/generate', [PrintController::class, 'printAllTripReportsWithBookingsOnly']);
 // ===========================================================================>> POS
 Route::prefix('bookings')->group(function () {
     Route::post('/', [BookingController::class, 'makeBooking']);
@@ -43,7 +44,8 @@ Route::group(['prefix' => 'countries'], function () {
     // Route::post('/types/{id}',   [ProductTypeController::class, 'update']); // Update
     // Route::delete('/types/{id}', [ProductTypeController::class, 'delete']); // Delete a Record
 
-    // ===>> Product
+    // ===>> Countries
+    Route::get('/setup',        [ContryController::class, 'setUpData']); // Read Multi Records
     Route::get('/',        [ContryController::class, 'listing']); // Read Multi Records
     Route::get('/{id}',    [ContryController::class, 'view']); // View a Record
     Route::post('/',       [ContryController::class, 'create']); // Create New Record
@@ -60,7 +62,7 @@ Route::group(['prefix' => 'cities'], function () {
     // Route::post('/types',       [ProductTypeController::class, 'create']); // Create New Record
     // Route::post('/types/{id}',   [ProductTypeController::class, 'update']); // Update
     // Route::delete('/types/{id}', [ProductTypeController::class, 'delete']); // Delete a Record
-    
+
     // ===>> Product
     Route::get('/setup',        [CityController::class, 'setUpData']); // Read Multi Records
     Route::get('/',        [CityController::class, 'listing']); // Read Multi Records
@@ -72,6 +74,24 @@ Route::group(['prefix' => 'cities'], function () {
 
 });
 
+Route::group(['prefix' => 'trips'], function () {
+
+    // // ===>> Product Type
+    // Route::get('/types',        [ProductTypeController::class, 'getData']); // Read Multi Records
+    // Route::post('/types',       [ProductTypeController::class, 'create']); // Create New Record
+    // Route::post('/types/{id}',   [ProductTypeController::class, 'update']); // Update
+    // Route::delete('/types/{id}', [ProductTypeController::class, 'delete']); // Delete a Record
+
+    // ===>> Product
+    Route::get('/setup',        [TripController::class, 'setUpData']); // Read Multi Records
+    Route::get('/',        [TripController::class, 'listing']); // Read Multi Records
+    Route::get('/{id}',    [TripController::class, 'view']); // View a Record
+    Route::post('/',       [TripController::class, 'create']); // Create New Record
+    Route::post('/{id}',   [TripController::class, 'update']); // Update
+    Route::delete('/{id}', [TripController::class, 'delete']); // Delete a Record
+    // Route::get('/transactions/{id}', [ContryController::class, 'getProduct']);
+
+});
 // ===========================================================================>> User
 Route::group(['prefix' => 'users'], function () {
 
