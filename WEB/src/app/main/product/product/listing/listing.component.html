@@ -92,7 +92,7 @@
                         <th mat-header-cell *matHeaderCellDef> រូបភាព </th>
                         <td mat-cell *matCellDef="let element">
                             <img [src]="element?.image ? FILE_PUBLIC_BASE_URL + element.image : null"
-                                style="width: 100px; height: 100px;" alt="image">
+                                style="width: 50px; height: 45px;" alt="image">
                         </td>
                     </ng-container>
 
@@ -126,13 +126,13 @@
                     </ng-container>
 
 
-                    <!-- Column: Description -->
+                    <!-- Column: description -->
                     <ng-container matColumnDef="description">
                         <th mat-header-cell *matHeaderCellDef> ការបរិយាយ </th>
                         <td mat-cell *matCellDef="let element">
                             {{ element?.description?.length > 100 ? (element.description | slice:0:100) + '...' : element.description }}
                           </td>
-                          
+
                     </ng-container>
 
                     <!-- Column: Date -->
@@ -153,10 +153,10 @@
                                 <mat-icon svgIcon="mat_outline:more_vert"></mat-icon>
                             </button>
                             <mat-menu #menu="matMenu">
-                                <button mat-menu-item [routerLink]="[element.id, 'view']" [state]="element">
+                                <!-- <button mat-menu-item [routerLink]="[element.id, 'view']" [state]="element">
                                     <mat-icon svgIcon="mat_outline:remove_red_eye" class="text-blue-500"></mat-icon>
                                     <span class="text-blue-500">មើល</span>
-                                </button>
+                                </button> -->
                                 <button mat-menu-item (click)="update(i, element)">
                                     <mat-icon svgIcon="mat_outline:edit" class="text-blue-500"></mat-icon>
                                     <span class="text-blue-500">កែប្រែ</span>

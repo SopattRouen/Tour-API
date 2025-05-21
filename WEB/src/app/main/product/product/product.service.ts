@@ -31,6 +31,14 @@ export class ProductsService {
         return this.http.post(this.url + '/admin/countries', data, this.httpOptions);
     }
 
+    //get setup data
+    getSetUp(): any {
+        const httpOptions = {
+            headers: new HttpHeaders().set('Content-Type', 'application/json')
+        };
+        return this.http.get(this.url + '/admin/countries/setup', httpOptions);
+    }
+
     // =================== Update One Product
     view(id: number=null): Observable<any> {
         console.log(id);

@@ -31,7 +31,7 @@ export class SaleService {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         };
         httpOptions['params'] = params;
-        return this.http.get(this.url + '/admin/bookings/getData', httpOptions);
+        return this.http.get(this.url + '/admin/bookings/getData?order=asc', httpOptions);
     }
     // ==================== Delete One Product
     print(receipt_number: number = 0): any {

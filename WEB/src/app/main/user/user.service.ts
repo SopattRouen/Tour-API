@@ -16,6 +16,7 @@ export class UserService {
     public httpOptions = {
         headers: new HttpHeaders().set('Content-Type', 'application/json'),
     };
+    user$: any;
 
     constructor(private http: HttpClient) { }
 

@@ -1,5 +1,5 @@
 <div mat-dialog-title class="custom-dialog-title">
-    <span class="text-2xl text-white">ម៉ាកផលិតផល</span>
+    <span class="text-2xl text-white">ទីក្រុង</span>
 </div>
 
 <mat-dialog-content class="custom-dialog-content" scrollbar>
@@ -35,21 +35,7 @@
                     សូមជ្រើសរើស្រទេស
                 </mat-error>
             </mat-form-field>
-            <mat-form-field appearance="outline" class="w-full mb-6">
-                <mat-label>ចំនួនថ្ងៃ</mat-label>
-                <input id="trip_days" matInput [formControlName]="'trip_days'" required>
-                <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('trip_days').hasError('required')">
-                    សូមបញ្ចូលចំនួនថ្ងៃ
-                </mat-error>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="w-full mb-6">
-                <mat-label>តំលៃ</mat-label>
-                <input id="price" matInput [formControlName]="'price'" required>
-                <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('price').hasError('required')">
-                    សូមបញ្ចូលចំនួនតំលៃ
-                </mat-error>
-            </mat-form-field>
+            
         </div>
     </form>
 </mat-dialog-content>
@@ -64,5 +50,5 @@
     <button class="min-w-8 max-w-8 rounded-md" mat-flat-button [mat-dialog-close]="false" color="warn">
         <mat-icon class="icon-size-6 text-white" [svgIcon]="'heroicons_solid:x'"></mat-icon>
     </button>
-    
+
 </mat-dialog-actions>

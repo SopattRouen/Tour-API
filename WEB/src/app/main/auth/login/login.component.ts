@@ -53,7 +53,7 @@ export class LoginComponent implements OnInit {
     {
         // Build LogInForm the form
         this.logInForm = this._formBuilder.group({
-            username    : ['0977779688', [Validators.required]],
+            username    : ['060486849', [Validators.required]],
             password    : ['123456', [Validators.required, Validators.minLength(6)]]
         });
     }

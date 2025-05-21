@@ -1,5 +1,5 @@
 <div mat-dialog-title class="custom-dialog-title">
-    <span class="text-3xl text-white">បង្កើតទីក្រុង</span>
+    <span class="text-3xl text-white">បង្កើតកន្លែងកំសាន្ត</span>
 </div>
 
 <mat-dialog-content class="custom-dialog-content" scrollbar>
@@ -35,21 +35,6 @@
                         <mat-error class="min-h-6 mt-2.5 text-sm"
                             *ngIf="form.get('country_id').hasError('required')">
                             សូមជ្រើសរើស្រទេស
-                        </mat-error>
-                    </mat-form-field>
-                    <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>ចំនួនថ្ងៃ</mat-label>
-                        <input id="trip_days" matInput [formControlName]="'trip_days'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('trip_days').hasError('required')">
-                            សូមបញ្ចូលចំនួនថ្ងៃ
-                        </mat-error>
-                    </mat-form-field>
-
-                    <mat-form-field appearance="outline" class="w-full mb-6">
-                        <mat-label>តំលៃ</mat-label>
-                        <input id="price" matInput [formControlName]="'price'" required>
-                        <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('price').hasError('required')">
-                            សូមបញ្ចូលចំនួនតំលៃ
                         </mat-error>
                     </mat-form-field>
 

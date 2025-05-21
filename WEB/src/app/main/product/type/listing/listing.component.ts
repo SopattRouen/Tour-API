@@ -20,7 +20,7 @@ import { CreateComponent } from '../create/create.component';
 })
 export class ListingComponent implements OnInit {
 
-    public displayedColumns: string[] = ['no','image', 'name', 'trip_days', 'price', 'contry_name', 'date','action'];
+    public displayedColumns: string[] = ['no','image', 'name', 'contry_name', 'date','action'];
     public dataSource: any;
     public isLoading: boolean = false;
     public data: any = [];

@@ -53,7 +53,7 @@ export class UpdateDialogComponent implements OnInit {
   formBuilder(): void {
     this.form = this._formBuilder.group({
       name: [this.dialogData.name],
-      continent: [this.dialogData.continent],
+      continent_id: [this.dialogData.continent],
       population: [this.dialogData.population],
       territory: [this.dialogData.territory],
       description: [this.dialogData.description],
@@ -90,7 +90,7 @@ export class UpdateDialogComponent implements OnInit {
         this._snackBar.openSnackBar(res.message, '');
 
         // Close dialog and return data to listing component
-        this._dialogRef.close(res.product);
+        this._dialogRef.close(res.data); // instead of res.product
       },
       (err: any) => {
 
@@ -107,7 +107,7 @@ export class UpdateDialogComponent implements OnInit {
   }
 
   getProductType(): void {
-    this._service.getProductType().subscribe(
+    this._service.getSetUp().subscribe(
       (res: any) => {
       this.types = res;
     },

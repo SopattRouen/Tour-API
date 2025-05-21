@@ -53,8 +53,6 @@ export class CreateComponent implements OnInit {
   formBuilder(): void {
     this.form = this._formBuilder.group({
       name: ['', Validators.required],
-      trip_days: ['', Validators.required],
-      price: ['', Validators.required],
       country_id: ['', Validators.required],
       image: [],
     });

@@ -38,17 +38,17 @@ export class MyProfileService {
 
     // ==================== Get Profile
     getProfile(): any {
-        return this.http.get(this.url + '/my-profiles', this.httpOptions);
+        return this.http.get(this.url + '/profile', this.httpOptions);
     }
 
     // ==================== Update Profile
     updateProfile(data: any): any {
-        return this.http.post(this.url + '/my-profiles',data, this.httpOptions);
+        return this.http.post(this.url + '/profile',data, this.httpOptions);
     }
 
     // =================== Update password
     updatePassword(data: any): any {
-        return this.http.post(this.url + '/my-profiles/change-password',data, this.httpOptions);
+        return this.http.post(this.url + '/profile/change-password',data, this.httpOptions);
     }
 
     // ==================== user service for replay ====================== \\

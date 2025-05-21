@@ -15,7 +15,6 @@
         "build-prod": "ng build --configuration production"
     },
     "dependencies": {
-        "@types/node": "18.17.19",
         "@angular/animations": "14.2.4",
         "@angular/cdk": "14.2.3",
         "@angular/common": "14.2.4",
@@ -30,8 +29,10 @@
         "@angular/router": "14.2.4",
         "@ngneat/transloco": "4.1.1",
         "@types/file-saver": "^2.0.5",
+        "@types/node": "18.17.19",
         "apexcharts": "3.35.5",
         "crypto-js": "3.3.0",
+        "date-fns": "^4.1.0",
         "file-saver": "^2.0.5",
         "hammerjs": "^2.0.8",
         "highlight.js": "11.6.0",
@@ -45,6 +46,7 @@
         "ngx-quill": "19.0.1",
         "ngx-ui-switch": "^14.0.3",
         "perfect-scrollbar": "1.5.5",
+        "process": "^0.11.10",
         "quill": "1.3.7",
         "rxjs": "7.5.7",
         "tslib": "2.4.0",

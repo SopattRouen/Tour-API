@@ -48,18 +48,20 @@ export class ListingComponent implements OnInit {
     'trip_days',
     'num_of_guests',
     'phone_number',
+    'booked_at',
     'checkin_date',
     'action'
   ];
-  
+
 
   public dataSource: any;
-  
+
 
   public isLoading: boolean = false;
   public isDownloading: boolean = false;
 
   public data: any = [];
+  public key : string;
 
   public page: number = 1;
   public receiptNumber: string = '';
@@ -86,66 +88,46 @@ export class ListingComponent implements OnInit {
   }
 
   //===================================>> List
-  getData(_limit: number = 10, _page: number = 1): any {
-
-
-    // Parameter Preparation
+  getData(_limit: number = 10, _page: number = 1): void {
+    // Prepare Parameters
     const param: any = {
-      limit: _limit,
-      page: _page,
+        limit: _limit,
+        page: this.page || _page
     };
 
-    // Fillter by Receipt Number
-    if (this.receiptNumber !== '') {
-      param.receipt_number = this.receiptNumber;
+    // Search by keyword (receipt number or others)
+    if (this.key && this.key.trim() !== '') {
+        param.key = this.key.trim();
     }
 
-    // Parameter Date Range
-    if (this.from !== undefined && this.to !== undefined) {
-
-      param.from    = this.from;
-      param.to      = this.to;
-
+    // Add Date Range if available
+    if (this.from && this.to) {
+        param.from = this.from;
+        param.to = this.to;
     }
 
-    if (this.page !== 0) {
-      param.page = this.page;
-    }
-
-    // Dispaly Spinner UI
+    // Show loading spinner
     this.isLoading = true;
 
-    // Call API
-    this._saleService.getBookings(param).subscribe((res: any) => {
+    // API Call
+    this._saleService.getBookings(param).subscribe({
+        next: (res: any) => {
+            this.isLoading = false;
+            this.data = res.data;
+            this.dataSource = new MatTableDataSource(this.data);
 
-        // console.log(res);
+            // Update pagination
+            this.total = res.total;
+            this.page = res.current_page;
+            this.limit = res.per_page;
+        },
+        error: () => {
+            this.isLoading = false;
+            this._snackBarService.openSnackBar('Something went wrong.', 'error');
+        }
+    });
+}
 
-        // Stop Loading
-        this.isLoading        = false;
-
-        // Mapping Data
-        this.data             = res.data;
-
-        // Mapping Data Source
-        this.dataSource       = new MatTableDataSource(this.data);
-        
-
-        // Update Pagination
-        this.total            = res.total;
-        this.page             = res.current_page;
-        this.limit            = res.per_page;
-
-    }, (err: any) => {
-
-        // Stop Loading
-        this.isLoading = false;
-
-        // Display Warning Mesage
-        this._snackBarService.openSnackBar('Something went wrong.', 'error');
-
-    }
-    );
-  }
 
   //=======================================>> On Page Changed
   onPageChanged(event: any): any {

@@ -37,11 +37,27 @@
                             សូមជ្រើសរើសប្រភេទផលិតផល
                         </mat-error>
                     </mat-form-field> -->
-                    <mat-form-field appearance="outline" class="w-full mb-6">
+                    <!-- <mat-form-field appearance="outline" class="w-full mb-6">
                         <mat-label>ទ្វីប</mat-label>
                         <input id="continent" matInput [formControlName]="'continent'" required>
                         <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('continent').hasError('required')">
                             សូមបញ្ចូលទ្វីប
+                        </mat-error>
+                    </mat-form-field> -->
+                    <mat-form-field appearance="outline" class="w-full mb-6">
+                        <mat-label>ទ្វីប</mat-label>
+                        <ng-container>
+                            <mat-select formControlName="continent_id">
+                                <ng-container *ngIf="types?.length > 0">
+                                    <mat-option *ngFor="let row of types" [value]="row.id">
+                                        <span>{{ row.name }}</span>
+                                    </mat-option>
+                                </ng-container>
+                            </mat-select>
+                        </ng-container>
+                        <mat-error class="min-h-6 mt-2.5 text-sm"
+                            *ngIf="form.get('continent_id').hasError('required')">
+                            សូមជ្រើសរើស្រទេស
                         </mat-error>
                     </mat-form-field>
 

@@ -17,7 +17,7 @@ import { environment as env } from 'environments/environment';
 })
 export class ViewDialogComponent implements OnInit  {
   public form: UntypedFormGroup;
-  public isSaving:boolean = false; 
+  public isSaving:boolean = false;
   public types: any = [];//Product Type
   public srcImageFileUrl: string = 'assets/icons/icon-img.png';
   constructor(
@@ -26,10 +26,10 @@ export class ViewDialogComponent implements OnInit  {
     private snackBar: SnackbarService,
     private _dialogRef: MatDialogRef<ViewDialogComponent>,
     private _typeService: ProductTypeService,
-    
-    
+
+
   ) {
-    
+
   }
 
   ngOnInit(): void {
@@ -41,8 +41,6 @@ export class ViewDialogComponent implements OnInit  {
   formBuilder(): void {
     this.form = this._formBuilder.group({
       name: [this.data.name, Validators.required],
-      trip_days: [this.data.trip_days],
-      price: [this.data.price],
       country_id:[this.data.country_id],
       image:[this.data.image],
     });
@@ -79,8 +77,8 @@ export class ViewDialogComponent implements OnInit  {
     },
   );
   }
-  
-  
+
+
 }
 
 

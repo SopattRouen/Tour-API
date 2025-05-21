@@ -53,7 +53,7 @@ export class CreateComponent implements OnInit {
   formBuilder(): void {
     this.form = this._formBuilder.group({
       name: ['', Validators.required],
-      continent: ['', Validators.required],
+      continent_id: ['', Validators.required],
       population: ['', Validators.required],
       territory: ['', Validators.required],
       description: ['', Validators.required],
@@ -121,7 +121,7 @@ export class CreateComponent implements OnInit {
   }
 
   getProductType(): void {
-    this._productsTypeService.get().subscribe(
+    this._productsService.getSetUp().subscribe(
       (res: any) => {
       this.types = res;
     },

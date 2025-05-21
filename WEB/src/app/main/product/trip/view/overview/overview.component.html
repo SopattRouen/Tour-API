@@ -1,0 +1,103 @@
+<div class="main-content-overview p-3">
+    <div class="overview-image -mt-10">
+        <!-- <app-portrait  mode="mode" [src]=" src " [title]=" 'ជ្រើសរើសរូបភាព' "
+        (srcChange)="srcChange($event)"> -->
+    <!-- </app-portrait> -->
+    </div>
+    <div class="w-full p-6">
+        <div class="w-full">
+
+            <!-- form -->
+            <form class="custom-form" [formGroup]="form">
+
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>ចំណងជើង</mat-label>
+                    <input id="title" matInput [formControlName]="'title'" required>
+                    <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('title').hasError('required')">
+                        សូមបញ្ចូលឈ្មោះ
+                    </mat-error>
+                </mat-form-field>
+                <!-- <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>ទ្វីប</mat-label>
+                    <ng-container>
+                        <mat-select formControlName="type_id">
+                            <ng-container *ngIf="types?.length > 0">
+                                <mat-option *ngFor="let row of types" [value]="row.id">
+                                    <span>{{ row.name }}</span>
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </ng-container>
+                    <mat-error class="min-h-6 mt-2.5 text-sm"
+                        *ngIf="form.get('type_id').hasError('required')">
+                        សូមជ្រើសរើសប្រភេទផលិតផល
+                    </mat-error>
+                </mat-form-field> -->
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>ទីកន្លែង</mat-label>
+                    <ng-container>
+                        <mat-select formControlName="city_id">
+                            <ng-container *ngIf="types?.length > 0">
+                                <mat-option *ngFor="let row of types" [value]="row.id">
+                                    <span>{{ row.name }}</span>
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </ng-container>
+                    <mat-error class="min-h-6 mt-2.5 text-sm"
+                        *ngIf="form.get('city_id').hasError('required')">
+                        សូមជ្រើសរើសទីកន្លែង
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>តម្លៃ​($)</mat-label>
+                    <input id="price" matInput [formControlName]="'price'" required>
+                    <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('price').hasError('required')">
+                        សូមបញ្ចូលចំនួនតម្លៃ​($)
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>ចំនួនថ្ងៃដំណើរកំសាន្ត</mat-label>
+                    <input id="trip_days" matInput [formControlName]="'trip_days'" required>
+                    <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('trip_days').hasError('required')">
+                        សូមបញ្ចូលចំនួនថ្ងៃដំណើរកំសាន្ត
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>ថ្ងៃចេញដំណើរ</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="start_date" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('start_date')?.hasError('required')">
+                      សូមបញ្ចូលចំនួនថ្ងៃចេញដំណើរ
+                    </mat-error>
+                  </mat-form-field>
+                  
+
+                <mat-form-field appearance="outline" class="w-full mb-6">
+                    <mat-label>ការបរិយាយ</mat-label>
+                    <input id="description" matInput [formControlName]="'description'" required>
+                    <mat-error class="min-h-6 mt-2.5 text-sm" *ngIf="form.get('description').hasError('required')">
+                        សូមបញ្ចូលការបរិយាយ
+                    </mat-error>
+                </mat-form-field>
+
+
+                <!-- Submit button -->
+                <div class="flex justify-end">
+                    <button class="min-w-8 max-w-8 rounded-md mr-2" mat-flat-button color="warn" (click)="navigateBack()">
+                        <mat-icon class="icon-size-6 text-white" [svgIcon]="'heroicons_solid:x'"></mat-icon>
+                    </button>
+                    <button class="min-w-8 max-w-8 rounded-md custom-button" mat-flat-button (click)="submit()"
+                        [disabled]="form.invalid || saving">
+                        <mat-icon *ngIf="!form.disabled" class="icon-size-6 text-white" svgIcon="mat_solid:save"></mat-icon>
+                        <mat-progress-spinner *ngIf="form.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

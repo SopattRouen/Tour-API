@@ -44,7 +44,7 @@ export const appRoutes: Route[] = [
             // =============================>> Dashboard
             {
                 path: 'dashboard',
-                loadChildren: () => import('app/main/dashboard/dashboard.module').then(m => m.DashboardModule),
+                loadChildren: () => import('app/main/a1-dashboard/dashboard.module').then(m => m.DashboardModule),
                 canActivate: [AuthGuard],
             },
 
